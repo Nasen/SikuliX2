@@ -12,6 +12,7 @@ import java.util.Date;
 
 import com.sikulix.api.Keys;
 import com.sikulix.core.SX;
+import com.sikulix.util.Settings;
 import org.sikuli.util.Debug;
 import org.sikuli.util.EventObserver;
 import org.sikuli.util.EventSubject;
@@ -84,12 +85,11 @@ public class Screen extends Region implements EventObserver, IScreen {
       nMonitor++;
     }
     Mouse.init();
-    Keys.init();
     if (getNumberScreens() > 1) {
       log(lvl, "initScreens: multi monitor mouse check");
       Location lnow = Mouse.at();
-      float mmd = SX.MoveMouseDelay;
-      SX.MoveMouseDelay = 0f;
+      float mmd = Settings.MoveMouseDelay;
+      Settings.MoveMouseDelay = 0f;
       Location lc = null, lcn = null;
       for (Screen s : screens) {
         lc = s.getCenter();
@@ -103,7 +103,7 @@ public class Screen extends Region implements EventObserver, IScreen {
         }
       }
       Mouse.move(lnow);
-      SX.MoveMouseDelay = mmd;
+      Settings.MoveMouseDelay = mmd;
     }
   }
 
@@ -404,33 +404,9 @@ public class Screen extends Region implements EventObserver, IScreen {
     return robot;
   }
 
-  /**
-   * creates a region on the current screen with the given coordinate/size. The coordinate is translated to the current
-   * screen from its relative position on the screen it would have been created normally.
-   *
-   * @param loc Location
-   * @param width value
-   * @param height value
-   * @return the new region
-   */
-  public Region newRegion(Location loc, int width, int height) {
-    return Region.create(loc.copyTo(this), width, height);
-  }
-
   @Override
   public ScreenImage getLastScreenImageFromScreen() {
     return lastScreenImage;
-  }
-
-  /**
-   * creates a location on the current screen with the given point. The coordinate is translated to the current screen
-   * from its relative position on the screen it would have been created normally.
-   *
-   * @param loc Location
-   * @return the new location
-   */
-  public Location newLocation(Location loc) {
-    return (new Location(loc)).copyTo(this);
   }
 
   //</editor-fold>
@@ -456,7 +432,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    */
   @Override
   public ScreenImage capture(int x, int y, int w, int h) {
-    Rectangle rect = newRegion(new Location(x, y), w, h).getRect();
+    Rectangle rect = new Rectangle(x, y, w, h);
     return capture(rect);
   }
 
@@ -622,11 +598,11 @@ public class Screen extends Region implements EventObserver, IScreen {
   //<editor-fold defaultstate="collapsed" desc="Visual effects">
   @Override
   public void showTarget(Location loc) {
-    showTarget(loc, SX.SlowMotionDelay);
+    showTarget(loc, Settings.SlowMotionDelay);
   }
 
   protected void showTarget(Location loc, double secs) {
-    if (SX.ShowActions) {
+    if (Settings.ShowActions) {
       ScreenHighlighter overlay = new ScreenHighlighter(this, null);
       overlay.showTarget(loc, (float) secs);
     }
