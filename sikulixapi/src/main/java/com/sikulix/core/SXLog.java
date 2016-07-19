@@ -7,6 +7,12 @@ package com.sikulix.core;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 public class SXLog {
 
   public static final int INFO = 1;
@@ -26,6 +32,7 @@ public class SXLog {
   protected SXLog() {
     init(null, null, -1);
     logger = LogManager.getLogger("SX.Global");
+    getTranslation("sxinit: entry", "");
   }
 
   public SXLog(String className, String[] args, int level) {
@@ -63,6 +70,7 @@ public class SXLog {
     }
     SX.sxinit(args);
     logger = LogManager.getLogger(className);
+    translation = className.startsWith("SX.");
   }
 
   public void off() {
@@ -161,11 +169,13 @@ public class SXLog {
   }
 
   private void log(int level, String message, Object... args) {
+    String msgPlus = "";
     if (level == FATAL) {
-      message = "*** terminating: " + message;
+      msgPlus = "terminating";
     }
     if (shouldLog(level)) {
-      message = String.format(message, args).replaceAll("\\n", " ");
+      message = getTranslation(message, msgPlus);
+       message = String.format(message, args).replaceAll("\\n", " ");
       if (level == DEBUG) {
         logger.debug(message, args);
       } else if (level > DEBUG) {
@@ -178,6 +188,84 @@ public class SXLog {
         logger.info(message, args);
       }
     }
+  }
+
+  private static Map<String, Properties> translateProps = new HashMap<>();
+
+  private boolean translation = true;
+
+  private String getTranslation(String msg, String msgPlus) {
+    if (!translation) {
+      return (!SX.isUnset(msgPlus) ? "*** " + msgPlus + ": " : "") + msg;
+    }
+    String orgMsg = msg;
+    String clazz = logger.getName().replaceAll("\\.", "");
+    Properties currentProps = null;
+    if (!translateProps.containsKey(clazz)) {
+      currentProps = null;
+      InputStream isProps = null;
+      try {
+        String resProp = "i18n/" + clazz + "_en_US.properties";
+        isProps = this.getClass().getClassLoader().getResourceAsStream(resProp);
+        if (!SX.isNull(isProps)) {
+          currentProps = new Properties();
+          currentProps.load(isProps);
+        }
+      } catch (IOException e) {
+        isProps = null;
+      }
+      if (SX.isNull(isProps)) {
+        System.out.println(String.format("SX.Log: getTranslation: missing ressource for %s", clazz));
+        currentProps = null;
+      }
+      translateProps.put(clazz, currentProps);
+    }
+    msgPlus = getTranslationGlobal(msgPlus);
+    String tKey = "";
+    String msgToTranslate = "";
+    if (!SX.isNull(currentProps = translateProps.get(clazz))) {
+      tKey = clazz;
+      String method = "no_method:";
+      String phrase = "";
+      String[] parts = null;
+      if (msg.contains(":")) {
+        parts = msg.split(":");
+        method = parts[0];
+        tKey += "_" + method;
+        msg = msg.substring(method.length() + 1).trim();
+        msgToTranslate = msg;
+      }
+      if (msg.contains(" ")) {
+        parts = msg.split(" ");
+        phrase = parts[0].replaceAll(":", "");
+      } else {
+        phrase = msg;
+      }
+      tKey = tKey + "_" + phrase.toLowerCase();
+      tKey = tKey.replaceAll("%", "#");
+      String trans = currentProps.getProperty(tKey);
+      if (!SX.isNull(trans)) {
+        return method + ": " + trans;
+      }
+    }
+    String transError = "";
+    if (clazz.startsWith("SX") && currentLogLevel > DEBUG) {
+      transError = "*** " + String.format("%s (%s = %s)", getTranslationGlobal("translation"),
+              tKey, msgToTranslate.replaceAll("%", "#")) + ": ";
+    }
+    return transError + (!SX.isUnset(msgPlus) ? "*** " + msgPlus + ": " : "") + orgMsg;
+  }
+
+  private String getTranslationGlobal(String msg) {
+    if (!SX.isUnset(msg)) {
+      Properties props = translateProps.get("SXGlobal");
+      String transMsgPlus = msg;
+      if (!SX.isNull(props)) {
+        transMsgPlus = props.getProperty("SXGlobal_" + msg.toLowerCase().split(" ")[0]);
+      }
+      msg = transMsgPlus;
+    }
+    return msg;
   }
 }
 

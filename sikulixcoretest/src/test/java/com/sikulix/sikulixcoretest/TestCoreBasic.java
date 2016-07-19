@@ -127,10 +127,10 @@ public class TestCoreBasic extends Commands {
     if (!SX.isHeadless()) {
       currentTest = "test_30_popat";
       popat(300, 300);
-      popup("testing popat", "testing popat");
+      popup("Use mouse to click OK", "testing popat");
       Location loc = Mouse.at();
       result = String.format("testing popat - clicked at (%d, %d)", loc.x, loc.y);
-      assertVal = loc.x > 250 && loc.x < 350;
+      assertVal = loc.x > 300 && loc.x < 450;
     } else {
       result = "headless: not testing popat";
     }

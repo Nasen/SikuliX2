@@ -9,9 +9,8 @@ import com.sikulix.core.SX;
 import com.sikulix.core.SXLog;
 import com.sikulix.scripting.JythonHelper;
 import com.sikulix.scripting.Runner;
-import com.sikulix.util.SikulixFileChooser;
+import com.sikulix.util.FileChooser;
 import org.sikuli.script.Key;
-import org.sikuli.util.Debug;
 import org.sikuli.util.hotkey.HotkeyListener;
 
 import javax.swing.*;
@@ -25,7 +24,7 @@ import java.util.StringTokenizer;
 
 public class Commands extends SX {
 
-  private static SXLog log = getLogger("SXCommands");
+  private static SXLog log = getLogger("SX.Commands");
 
   //<editor-fold desc="load a jar">
   /**
@@ -87,6 +86,11 @@ public class Commands extends SX {
 
   public static Location popat(Region at) {
     locPopAt = new Point(at.getCenter().x, at.getCenter().y);
+    return new Location(locPopAt);
+  }
+
+  public static Location popat(Rectangle at) {
+    locPopAt = new Point(at.x + (int) (at.width/2), at.y + (int) (at.height/2));
     return new Location(locPopAt);
   }
 
@@ -336,9 +340,9 @@ public class Commands extends SX {
   }
 
   public static String popFile(String title) {
-    popat(new Screen(0).getCenter());
+    popat(SX.getMonitor());
     JFrame anchor = popLocation();
-    SikulixFileChooser fc = new SikulixFileChooser(anchor);
+    FileChooser fc = new FileChooser(anchor);
     File ret = fc.show(title);
     fc = null;
     popat();

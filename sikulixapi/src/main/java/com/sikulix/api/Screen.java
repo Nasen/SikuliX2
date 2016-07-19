@@ -4,29 +4,36 @@
 
 package com.sikulix.api;
 
+import com.sikulix.core.Device;
 import com.sikulix.core.SX;
 import com.sikulix.core.SXLog;
 import com.sikulix.core.Visual;
 
-public class Screen extends Region {
+public class Screen extends Device {
 
-  private static vType vClazz = vType.SCREEN;
-  private static SXLog log = SX.getLogger("SX." + vClazz.toString());
+  private static SXLog log = SX.getLogger("SX.Screen");
 
   private int sNum = 0;
+  private Visual visScreen = null;
 
   public Screen() {
-    clazz = vClazz;
-    init(SX.getMonitor(SX.getMainMonitorID()));
+    init(SX.getMainMonitorID());
   }
 
-  public Screen(int n) {
-    clazz = vClazz;
-    sNum = n;
-    init(SX.getMonitor(n));
+  public Screen(int id) {
+    sNum = id;
+    init(id);
+  }
+
+  private void init(int id) {
+    visScreen = new Region(SX.getMonitor(sNum));
   }
 
   public static Region all() {
     return new Region(SX.getAllMonitors());
+  }
+
+  public Region asRegion() {
+    return (Region) visScreen;
   }
 }

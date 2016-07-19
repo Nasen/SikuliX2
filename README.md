@@ -1,15 +1,20 @@
 [![RaiMan's Stuff](https://raw.github.com/RaiMan/SikuliX-2014-Docs/master/src/main/resources/docs/source/RaiManStuff64.png)](http://sikulix.com) SikuliX2 (version 2.0.x)
 ============
 
+**[latest useable version is 1.1.1](https://github.com/RaiMan/SikuliX-2014)**
+
 [![Join the chat at https://gitter.im/RaiMan/SikuliX2](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RaiMan/SikuliX2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 <hr>
-**Version 2.0.0-Beta under developement**<br> 
+**Version 2.0.0 under developement**<br>
 [![Build Status](https://travis-ci.org/RaiMan/SikuliX2.svg?branch=master)](https://travis-ci.org/RaiMan/SikuliX2)
+<br><br>
+nightly builds from beginning of July 2016
+<br><br>
+Translation project: [Transifex::SikuliX2](https://www.transifex.com/sikulix/sikulix2/dashboard/)
+<br><br>
+Documentation project: [ReadTheDocs::SikuliX2](http://sikulix2.readthedocs.org/) based on [GitHub::SikuliX2-Docs](https://github.com/RaiMan/SikuliX2-Docs)
 <hr>
-
-**[latest working version is 1.1.1](https://github.com/RaiMan/SikuliX-2014)**
-
 **Forking and/or downloading this repo only makes sense:**
 
  - if you want to get a knowledge about the internals of Sikuli
@@ -25,15 +30,6 @@
 Maven module structure for developement
 ---
 
-**sikulix**
-
-the SikuliX IDE (internally using **[jEdit 5.3.0](http://www.jedit.org))**
-
- - full featured multi-purpose editor
- - SikuliX image handling added via jEdit plugin
- - run scripts (scripting supported internally: JavaScript, (J)Python, (J)Ruby, RobotFramework)
- - everyone may simply add whatever feature needed based on the possibilities of jEdit
-
 **sikulixapi**
 
 the API to be used in Java and Java aware scripting languages
@@ -44,11 +40,20 @@ the API to be used in Java and Java aware scripting languages
 
 **sikulixcoretest**
 
-basic tests for developement of the new features **com.sikulix.core** and **com.sikulix.api**
+basic tests for developement of the new packages **com.sikulix.core** and **com.sikulix.api**
 
 **sikulixapitest**
 
-basic tests for **org.sikuli.script** as api regression test (will later be a seperate package)
+basic tests for **org.sikuli.script** as regression test (will later be a seperate package)
+
+**sikulix**
+
+the SikuliX IDE (internally using **[jEdit 5.3.0](http://www.jedit.org))**
+
+ - full featured multi-purpose editor
+ - SikuliX image handling added via jEdit plugin
+ - run scripts (scripting supported internally: JavaScript, (J)Python, (J)Ruby, RobotFramework)
+ - everyone may simply add whatever feature needed based on the possibilities of jEdit
 
 ---
 
@@ -59,4 +64,8 @@ Prerequisites for development
  - Maven 3+
  - only 64-Bit Systems supported
 
-I use **[IntelliJ IDEA CE](https://www.jetbrains.com/idea/)** for developement.
+**For developement I use the [JetBrains IDEs](https://www.jetbrains.com)**
+
+ - **[IntelliJ IDEA CE](https://www.jetbrains.com/idea/)** for Java and everything else
+ - **[PyCharm CE](https://www.jetbrains.com/pycharm/)** for special Jython/Python stuff
+ - **[RubyMine](https://www.jetbrains.com/ruby/)** for special JRuby/Ruby stuff (special license for OpenSource projects)
